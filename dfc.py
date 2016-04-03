@@ -11,7 +11,7 @@ def main():
     
     analysF = '.code'    
     
-    os.system("objdump -d " + inputFile + " > " + fileName) #disassemble binary file
+    os.system("objdump -d -M intel " + inputFile + " > " + fileName) #disassemble binary file
     
     os.system(" cat -n " + fileName + " | sed -n '/<main>/,/__libc_csu_init/p' > " + analysF)    
     
@@ -40,7 +40,7 @@ def main():
         elif slct == 3:
             printFullOBJ(text)
         elif slct == 0:
-            sys.exit(0)
+            sys.exit(0) #chiude il programma
         else :
             sys.exit(0)
 
