@@ -126,9 +126,13 @@ def findDF(file):
     os.system("egrep '<strcat' < " + file + " | wc -l")
     os.system("egrep '<strcat' < " + file)
     
-    print("\n\t strcmp:")
-    os.system("egrep '<strcmp' < " + file + " | wc -l")
-    os.system("egrep '<strcmp' < " + file)
+    print("\n\t strncpy:")
+    os.system("egrep '<strncpy' < " + file + " | wc -l")
+    os.system("egrep '<strncpy' < " + file)    
+    
+    print("\n\t strncat:")
+    os.system("egrep '<strncat' < " + file + " | wc -l")
+    os.system("egrep '<strncat' < " + file)
 
     print("\n\t sprintf:")
     os.system("egrep '<sprintf' < " + file + " | wc -l")
