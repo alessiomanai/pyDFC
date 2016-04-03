@@ -13,7 +13,7 @@ def main():
     
     os.system("objdump -d -M intel " + inputFile + " > " + fileName) #disassemble binary file
     
-    os.system(" cat -n " + fileName + " | sed -n '/<main>/,/__libc_csu_init/p' > " + analysF)    
+    os.system(" cat -n " + fileName + " | sed -n '/<register_tm_clones>/,/__libc_csu_init/p' > " + analysF)    
     
     openFile = open(analysF, "r")
     
@@ -30,6 +30,7 @@ def main():
         print("\t1) Search design flaws ")
         print("\t2) Find gadgets ")
         print("\t3) Print disassembled code ")
+        print("\t4) Search by line or address ")
     
         slct = eval(input('Your option: '))
     
@@ -39,6 +40,8 @@ def main():
             findGadgets(analysF)
         elif slct == 3:
             printFullOBJ(text)
+        elif slct == 4:
+            searchLine(analysF)
         elif slct == 0:
             sys.exit(0) #chiude il programma
         else :
@@ -54,36 +57,54 @@ def printFullOBJ(text):
 
 
 def findGadgets(file):
-    
+    print("\n")
     os.system("egrep 'call' < " + file)
     os.system("egrep 'jmp' < " + file)
     os.system("egrep 'pop' < " + file)
     os.system("egrep 'ret' < " + file)
+    print("\n")
+
+def searchLine(file):
     
+    print("\n")
+
+    thing = input('Write line or address: ')
+    
+    os.system("egrep -A5 ' " + thing + "' < " + file)    #cerca le cinque linee successive
+    
+    print("\n")
+    
+    
+
+
     
 
 # function finder design flaws in binary code
 def findDF(file):
 
-    nFlaws = 0
-
     print("\n")
     print("Design flaws in code:")
 
-    if os.system("egrep 'printf' < " + file) :  #debug printf
-        nFlaws = 1
+    print("\t Possible unformatted printf:")
+    os.system("egrep '<printf@' < " + file)  #debug printf
 
-    if os.system("egrep 'fgets' < " + file) :  #debuf fgets
-        nFlaws = 1
+    print("\t gets:")
+    os.system("egrep '<gets' < " + file)   #debuf fgets
+
+    print("\t unsecure scanf:")
+    os.system("egrep '<scanf' < " + file)   #debug scanf
+
+    print("\t strcpy:")
+    os.system("egrep '<strcpy' < " + file)
     
-    if os.system("egrep 'scanf' < " + file):   #debug scanf
-        nFlaws = 1
+    print("\t getchar:")
+    os.system("egrep '<getchar' < " + file)
+    
+    print("\t strcmp:")
+    os.system("egrep '<strcmp' < " + file)
 
-    if os.system("egrep '%fs' < " + file):   #debug scanf
-        nFlaws = 1
-        
-    if nFlaws == 0:     #se non trova falle
-        print("No flaws found")
+    print("\t Stack canaries:")
+    os.system("egrep 'fs:' < " + file)   #debug scanf
 
     print("\n")
 
