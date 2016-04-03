@@ -13,6 +13,7 @@ def main():
     
     os.system("objdump -d -M intel " + inputFile + " > " + fileName) #disassemble binary file
     
+    #seleziona solamente la parte di codice necessaria
     os.system(" cat -n " + fileName + " | sed -n '/<register_tm_clones>/,/__libc_csu_init/p' > " + analysF)    
     
     openFile = open(analysF, "r")
@@ -31,6 +32,7 @@ def main():
         print("\t2) Find gadgets ")
         print("\t3) Print disassembled code ")
         print("\t4) Search by line or address ")
+        print("\t5) Find stack canaries ")
     
         slct = eval(input('Your option: '))
     
@@ -42,31 +44,46 @@ def main():
             printFullOBJ(text)
         elif slct == 4:
             searchLine(analysF)
-        elif slct == 0:
-            sys.exit(0) #chiude il programma
+        elif slct == 5:
+            findCanary(analysF)
         else :
             sys.exit(0)
 
 
 
-#print full assembly binary code
+#print full assembly binary code, beta
 def printFullOBJ(text):
     print("\n")    
     print (text)
     print("\n")
 
 
+#helps to find gadgets, in beta
 def findGadgets(file):
     print("\n")
-    os.system("egrep 'call' < " + file)
+    
+    print("\n\t call:")
+    os.system("egrep 'call eax' < " + file)
+    
+    print("\n\t jmp:")
     os.system("egrep 'jmp' < " + file)
+    
+    print("\n\t load reg:")
     os.system("egrep 'pop' < " + file)
+    
+    print("\n\t pop pop ret:")
     os.system("egrep 'ret' < " + file)
-    print("\n")
-
-def searchLine(file):
+    
+    print("\n\t stack pivoting:")
+    os.system("egrep 'leave' < " + file)
     
     print("\n")
+
+
+#simple searching with grep
+def searchLine(file):
+    
+    print(" ")
 
     thing = input('Write line or address: ')
     
@@ -75,8 +92,12 @@ def searchLine(file):
     print("\n")
     
     
-
-
+def findCanary(file):
+    
+    print("\n\t Stack canaries:")
+    os.system("egrep '(fs)|(gs):' < " + file + " | wc -l")
+    os.system("egrep -A3 '(fs)|(gs):' < " + file)   #debug scanf
+    print("\n")
     
 
 # function finder design flaws in binary code
@@ -86,25 +107,36 @@ def findDF(file):
     print("Design flaws in code:")
 
     print("\t Possible unformatted printf:")
+    os.system("egrep '<printf@' < " + file + " | wc -l")  #number of matches
     os.system("egrep '<printf@' < " + file)  #debug printf
 
-    print("\t gets:")
+    print("\n\t gets:")
+    os.system("egrep '<gets' < " + file + " | wc -l") 
     os.system("egrep '<gets' < " + file)   #debuf fgets
 
-    print("\t unsecure scanf:")
+    print("\n\t unsecure scanf:")
+    os.system("egrep '<scanf' < " + file + " | wc -l")
     os.system("egrep '<scanf' < " + file)   #debug scanf
 
-    print("\t strcpy:")
+    print("\n\t strcpy:")
+    os.system("egrep '<strcpy' < " + file + " | wc -l")
     os.system("egrep '<strcpy' < " + file)
     
-    print("\t getchar:")
-    os.system("egrep '<getchar' < " + file)
+    print("\n\t strcat:")
+    os.system("egrep '<strcat' < " + file + " | wc -l")
+    os.system("egrep '<strcat' < " + file)
     
-    print("\t strcmp:")
+    print("\n\t strcmp:")
+    os.system("egrep '<strcmp' < " + file + " | wc -l")
     os.system("egrep '<strcmp' < " + file)
 
-    print("\t Stack canaries:")
-    os.system("egrep 'fs:' < " + file)   #debug scanf
+    print("\n\t sprintf:")
+    os.system("egrep '<sprintf' < " + file + " | wc -l")
+    os.system("egrep '<sprintf' < " + file)
+
+    print("\n\t vsprintf:")
+    os.system("egrep '<vsprintf' < " + file + " | wc -l")
+    os.system("egrep '<vsprintf' < " + file)
 
     print("\n")
 
