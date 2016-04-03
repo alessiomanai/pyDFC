@@ -29,7 +29,7 @@ def main():
     while 1: 
         print("Select input for ")
         print("\t1) Search design flaws ")
-        print("\t2) Find gadgets ")
+        print("\t2) Find gadgets [beta]")
         print("\t3) Print disassembled code ")
         print("\t4) Search by line or address ")
         print("\t5) Find stack canaries ")
