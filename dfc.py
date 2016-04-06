@@ -77,8 +77,9 @@ def searchLine(file):
     print(" ")
 
     thing = input('Write line or address: ')
+    outputLines = input('Number of lines : ')
     
-    os.system("egrep -A5 ' " + thing + "' < " + file)    #cerca le cinque linee successive
+    os.system("egrep -A" + outputLines + " ' " + thing + "' < " + file)    #cerca le cinque linee successive
     
     print("\n")
     
