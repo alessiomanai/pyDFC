@@ -62,20 +62,11 @@ def printFullOBJ(text):
 def findGadgets(file):
     print("\n")
     
-    print("\n\t call:")
-    os.system("egrep 'call eax' < " + file)
-    
-    print("\n\t jmp:")
-    os.system("egrep 'jmp' < " + file)
-    
-    print("\n\t load reg:")
-    os.system("egrep 'pop' < " + file)
-    
     print("\n\t pop pop ret:")
-    os.system("egrep 'ret' < " + file)
+    os.system("egrep -A2 'pop' < " + file)
     
-    print("\n\t stack pivoting:")
-    os.system("egrep 'leave' < " + file)
+    #print("\n\t pop pop ret:")
+    #os.system("egrep -A1 'mov' < " + file)
     
     print("\n")
 
