@@ -5,11 +5,14 @@ import sys
 #
 def main():
     
-    inputFile = sys.argv[1] #argv[1] is input file, argv[0] is the python code
+    try:    #check binary file
+        inputFile = sys.argv[1] #argv[1] is input file, argv[0] is the python code
+    except:
+        print("Binary file not found")  
+        sys.exit(0) #if doesn't exist, abort
 
-    fileName = '.output'
-    
-    analysF = '.code'    
+    fileName = '.output' #inputFile text
+    analysF = '.code'    #code analyzed
     
     os.system("objdump -d -M intel " + inputFile + " > " + fileName) #disassemble binary file
     
@@ -106,9 +109,9 @@ def findDF(file):
     os.system("egrep '<gets' < " + file + " | wc -l") 
     os.system("egrep '<gets' < " + file)   #debuf fgets
 
-    print("\n\t unsecure scanf:")
-    os.system("egrep '<scanf' < " + file + " | wc -l")
-    os.system("egrep '<scanf' < " + file)   #debug scanf
+    print("\n\t Possible unsecure scanf:")
+    os.system("egrep 'scanf' < " + file + " | wc -l")
+    os.system("egrep 'scanf' < " + file)   #debug scanf
 
     print("\n\t strcpy:")
     os.system("egrep '<strcpy' < " + file + " | wc -l")
