@@ -67,9 +67,7 @@ def findGadgets(file):
     
     print("\n\t pop pop ret:")
     os.system("egrep -A2 'pop' < " + file)
-    
-    #print("\n\t pop pop ret:")
-    #os.system("egrep -A1 'mov' < " + file)
+
     
     print("\n")
 
@@ -106,36 +104,36 @@ def findDF(file):
     os.system("egrep '<printf@' < " + file)  #debug printf
 
     print("\n\t gets:")
-    os.system("egrep '<gets' < " + file + " | wc -l") 
-    os.system("egrep '<gets' < " + file)   #debuf fgets
+    os.system("egrep '<gets@' < " + file + " | wc -l") 
+    os.system("egrep '<gets@' < " + file)   #debuf fgets
 
     print("\n\t Possible unsecure scanf:")
-    os.system("egrep 'scanf' < " + file + " | wc -l")
-    os.system("egrep 'scanf' < " + file)   #debug scanf
+    os.system("egrep 'scanf@' < " + file + " | wc -l")
+    os.system("egrep 'scanf@' < " + file)   #debug scanf
 
     print("\n\t strcpy:")
-    os.system("egrep '<strcpy' < " + file + " | wc -l")
-    os.system("egrep '<strcpy' < " + file)
+    os.system("egrep '<strcpy@' < " + file + " | wc -l")
+    os.system("egrep '<strcpy@' < " + file)
     
     print("\n\t strcat:")
-    os.system("egrep '<strcat' < " + file + " | wc -l")
-    os.system("egrep '<strcat' < " + file)
+    os.system("egrep '<strcat@' < " + file + " | wc -l")
+    os.system("egrep '<strcat@' < " + file)
     
     print("\n\t strncpy:")
-    os.system("egrep '<strncpy' < " + file + " | wc -l")
-    os.system("egrep '<strncpy' < " + file)    
+    os.system("egrep '<strncpy@' < " + file + " | wc -l")
+    os.system("egrep '<strncpy@' < " + file)    
     
     print("\n\t strncat:")
-    os.system("egrep '<strncat' < " + file + " | wc -l")
-    os.system("egrep '<strncat' < " + file)
+    os.system("egrep '<strncat@' < " + file + " | wc -l")
+    os.system("egrep '<strncat@' < " + file)
 
     print("\n\t sprintf:")
-    os.system("egrep '<sprintf' < " + file + " | wc -l")
-    os.system("egrep '<sprintf' < " + file)
+    os.system("egrep '<sprintf@' < " + file + " | wc -l")
+    os.system("egrep '<sprintf@' < " + file)
 
     print("\n\t vsprintf:")
-    os.system("egrep '<vsprintf' < " + file + " | wc -l")
-    os.system("egrep '<vsprintf' < " + file)
+    os.system("egrep '<vsprintf@' < " + file + " | wc -l")
+    os.system("egrep '<vsprintf@' < " + file)
 
     print("\n")
 
