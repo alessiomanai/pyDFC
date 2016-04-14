@@ -2,7 +2,7 @@ import os
 import sys
 
 
-#
+#program starts with main function
 def main():
     
     try:    #check binary file
@@ -14,10 +14,20 @@ def main():
     fileName = '.output' #inputFile text
     analysF = '.code'    #code analyzed
     
-    os.system("objdump -d -M intel " + inputFile + " > " + fileName) #disassemble binary file
+    os.system("objdump -d -M intel " + inputFile + " > " + fileName) #disassemble binary file    
     
-    #seleziona solamente la parte di codice necessaria
-    os.system(" cat -n " + fileName + " | sed -n '/<register_tm_clones>/,/__libc_csu_init/p' > " + analysF)    
+    print ('\t\t pyDFC - Design flaws Catcher')
+    print ('A searching tool to find design flaws and vulnerable functions in C binary code\n ')    
+    
+    #seleziona solamente la parte di codice necessaria a seconda del sistema operativo di compilazione
+    if fileName.find("pei-i386"):
+        print("Windows binary detected")
+        osType = "windows"
+        os.system(" cat -n " + fileName + " | sed -n '/___gcc_deregister_frame/,/<___dyn_tls_dtor/p' > " + analysF)
+    else:
+        print("Linux binary detected")
+        osType = "linux"        
+        os.system(" cat -n " + fileName + " | sed -n '/<register_tm_clones>/,/__libc_csu_init/p' > " + analysF)    
     
     openFile = open(analysF, "r")
     
@@ -25,8 +35,7 @@ def main():
 
     #os.remove(fileName) #remove red file
     
-    print ('\t\t pyDFC - Design flaws Catcher')
-    print ('A searching tool to find design flaws and vulnerable functions in C binary code\n ')
+
 
 
     while 1: 
@@ -37,20 +46,25 @@ def main():
         print("\t4) Search by line or address ")
         print("\t5) Find stack canaries ")
     
-        slct = eval(input('Your option: '))
-    
-        if slct == 1 :
-            findDF(analysF)
-        elif slct == 2:
-            findGadgets(analysF)
-        elif slct == 3:
-            printFullOBJ(text)
-        elif slct == 4:
-            searchLine(analysF)
-        elif slct == 5:
-            findCanary(analysF)
-        else :
-            sys.exit(0)
+        try:
+            slct = eval(input('Your option: '))
+        
+            if slct == 1 :
+                findDF(analysF, osType)
+            elif slct == 2:
+                findGadgets(analysF)
+            elif slct == 3:
+                printFullOBJ(text)
+            elif slct == 4:
+                searchLine(analysF)
+            elif slct == 5:
+                findCanary(analysF)
+            else :
+                print("Exit from DFC")
+                sys.exit(0)
+        except:
+             print("Exit from DFC")
+             sys.exit(0)
 
 
 
@@ -94,46 +108,87 @@ def findCanary(file):
     
 
 # function finder design flaws in binary code
-def findDF(file):
+def findDF(file, osType):
 
     print("\n")
     print("Design flaws in code:")
 
-    print("\t Possible unformatted printf:")
-    os.system("egrep '<printf@' < " + file + " | wc -l")  #number of matches
-    os.system("egrep '<printf@' < " + file)  #debug printf
-
-    print("\n\t gets:")
-    os.system("egrep '<gets@' < " + file + " | wc -l") 
-    os.system("egrep '<gets@' < " + file)   #debuf fgets
-
-    print("\n\t Possible unsecure scanf:")
-    os.system("egrep 'scanf@' < " + file + " | wc -l")
-    os.system("egrep 'scanf@' < " + file)   #debug scanf
-
-    print("\n\t strcpy:")
-    os.system("egrep '<strcpy@' < " + file + " | wc -l")
-    os.system("egrep '<strcpy@' < " + file)
+    if osType == "linux":
+        print("\t Possible unformatted printf:")
+        os.system("egrep '<printf@' < " + file + " | wc -l")  #number of matches
+        os.system("egrep '<printf@' < " + file)  #debug printf
     
-    print("\n\t strcat:")
-    os.system("egrep '<strcat@' < " + file + " | wc -l")
-    os.system("egrep '<strcat@' < " + file)
+        print("\n\t gets:")
+        os.system("egrep '<gets@' < " + file + " | wc -l") 
+        os.system("egrep '<gets@' < " + file)   #debuf fgets
     
-    print("\n\t strncpy:")
-    os.system("egrep '<strncpy@' < " + file + " | wc -l")
-    os.system("egrep '<strncpy@' < " + file)    
+        print("\n\t Possible unsecure scanf:")
+        os.system("egrep 'scanf@' < " + file + " | wc -l")
+        os.system("egrep 'scanf@' < " + file)   #debug scanf
     
-    print("\n\t strncat:")
-    os.system("egrep '<strncat@' < " + file + " | wc -l")
-    os.system("egrep '<strncat@' < " + file)
+        print("\n\t strcpy:")
+        os.system("egrep '<strcpy@' < " + file + " | wc -l")
+        os.system("egrep '<strcpy@' < " + file)
+        
+        print("\n\t strcat:")
+        os.system("egrep '<strcat@' < " + file + " | wc -l")
+        os.system("egrep '<strcat@' < " + file)
+        
+        print("\n\t strncpy:")
+        os.system("egrep '<strncpy@' < " + file + " | wc -l")
+        os.system("egrep '<strncpy@' < " + file)    
+        
+        print("\n\t strncat:")
+        os.system("egrep '<strncat@' < " + file + " | wc -l")
+        os.system("egrep '<strncat@' < " + file)
+    
+        print("\n\t sprintf:")
+        os.system("egrep '<sprintf@' < " + file + " | wc -l")
+        os.system("egrep '<sprintf@' < " + file)
+    
+        print("\n\t vsprintf:")
+        os.system("egrep '<vsprintf@' < " + file + " | wc -l")
+        os.system("egrep '<vsprintf@' < " + file)
 
-    print("\n\t sprintf:")
-    os.system("egrep '<sprintf@' < " + file + " | wc -l")
-    os.system("egrep '<sprintf@' < " + file)
-
-    print("\n\t vsprintf:")
-    os.system("egrep '<vsprintf@' < " + file + " | wc -l")
-    os.system("egrep '<vsprintf@' < " + file)
+    elif osType == "windows":
+        print("\t Possible unformatted printf:")
+        os.system("egrep '<_printf' < " + file + " | wc -l")  #number of matches
+        os.system("egrep '<_printf' < " + file)  #debug printf
+    
+        print("\n\t gets:")
+        os.system("egrep '<_gets' < " + file + " | wc -l") 
+        os.system("egrep '<_gets' < " + file)   #debuf fgets
+    
+        print("\n\t Possible unsecure scanf:")
+        os.system("egrep '_scanf' < " + file + " | wc -l")
+        os.system("egrep '_scanf' < " + file)   #debug scanf
+    
+        print("\n\t strcpy:")
+        os.system("egrep '<_strcpy' < " + file + " | wc -l")
+        os.system("egrep '<_strcpy' < " + file)
+        
+        print("\n\t strcat:")
+        os.system("egrep '<_strcat' < " + file + " | wc -l")
+        os.system("egrep '<_strcat' < " + file)
+        
+        print("\n\t strncpy:")
+        os.system("egrep '<_strncpy' < " + file + " | wc -l")
+        os.system("egrep '<_strncpy' < " + file)    
+        
+        print("\n\t strncat:")
+        os.system("egrep '<_strncat' < " + file + " | wc -l")
+        os.system("egrep '<_strncat' < " + file)
+    
+        print("\n\t sprintf:")
+        os.system("egrep '<_sprintf' < " + file + " | wc -l")
+        os.system("egrep '<_sprintf' < " + file)
+    
+        print("\n\t vsprintf:")
+        os.system("egrep '<_vsprintf' < " + file + " | wc -l")
+        os.system("egrep '<_vsprintf' < " + file)
+        
+    else: 
+        print("Unknown file format")
 
     print("\n")
 
